@@ -1,0 +1,6 @@
+# Simulation parameters
+
+dt: 0.02
+max_steps: 1000
+lateral_limit: 0.5
+init_noise: 0.1

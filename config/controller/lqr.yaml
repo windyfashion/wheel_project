@@ -1,0 +1,16 @@
+# LQR Controller Configuration
+
+# State weight matrix Q: [e_lat, e_yaw, e_vx, e_omega]
+Q: [1.0, 2.0, 0.5, 0.5]
+
+# Control weight matrix R: [delta_v, delta_omega]
+R: [0.1, 0.1]
+
+# Parameter auto-tuning configuration
+tuner:
+  enabled: false
+  method: bayesian  # Options: bayesian, grid, random
+  n_trials: 50
+  q_range: [0.1, 10.0]
+  r_range: [0.01, 1.0]
+  objective: rms_lateral_error  # Metric to optimize
