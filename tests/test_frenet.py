@@ -84,7 +84,11 @@ class TestFrenetFrame:
     
     def test_wrap_angle(self):
         """Test angle wrapping."""
-        assert np.isclose(FrenetFrame.wrap_angle(np.pi), np.pi)
+        # pi and -pi are the same angle; the modulo formula returns -pi
+        assert np.isclose(FrenetFrame.wrap_angle(np.pi), -np.pi)
         assert np.isclose(FrenetFrame.wrap_angle(-np.pi), -np.pi)
-        assert np.isclose(FrenetFrame.wrap_angle(3*np.pi), np.pi)
-        assert np.isclose(FrenetFrame.wrap_angle(-3*np.pi), -np.pi)
+        assert np.isclose(FrenetFrame.wrap_angle(3 * np.pi), -np.pi)
+        assert np.isclose(FrenetFrame.wrap_angle(-3 * np.pi), -np.pi)
+        # General values
+        assert np.isclose(FrenetFrame.wrap_angle(0.5), 0.5)
+        assert np.isclose(FrenetFrame.wrap_angle(2 * np.pi + 0.1), 0.1, atol=1e-10)

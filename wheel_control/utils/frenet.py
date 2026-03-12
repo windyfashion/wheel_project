@@ -7,6 +7,7 @@ from dataclasses import dataclass
 import numpy as np
 
 from ..trajectory.base import X, Y, YAW, VX, W, KAPPA
+from .math_utils import MathUtils
 
 
 @dataclass
@@ -31,7 +32,7 @@ class FrenetFrame:
     @staticmethod
     def wrap_angle(angle: float) -> float:
         """Wrap angle to [-pi, pi]."""
-        return (angle + np.pi) % (2 * np.pi) - np.pi
+        return MathUtils.wrap_angle(angle)
 
     @staticmethod
     def world_to_frenet(

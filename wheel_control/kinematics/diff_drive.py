@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import numpy as np
 
+from ..utils.math_utils import MathUtils
+
 
 class DiffDriveKinematics:
     """Differential drive robot kinematic model.
@@ -61,7 +63,7 @@ class DiffDriveKinematics:
 
     @staticmethod
     def wrap_angle(angle: float) -> float:
-        return (angle + np.pi) % (2 * np.pi) - np.pi
+        return MathUtils.wrap_angle(angle)
 
     def step(self, v_cmd: float, omega_cmd: float) -> np.ndarray:
         """Advance one timestep given velocity commands.
@@ -88,9 +90,10 @@ class DiffDriveKinematics:
         self.vx = float(np.clip(self.vx, -self.max_v, self.max_v))
         self.omega = float(np.clip(self.omega, -self.max_omega, self.max_omega))
 
-        # Kinematic integration
-        self.x += self.vx * np.cos(self.theta) * self.dt
-        self.y += self.vx * np.sin(self.theta) * self.dt
+        # Midpoint kinematic integration (reduces heading drift vs forward Euler)
+        theta_mid = self.theta + self.omega * self.dt * 0.5
+        self.x += self.vx * np.cos(theta_mid) * self.dt
+        self.y += self.vx * np.sin(theta_mid) * self.dt
         self.theta = self.wrap_angle(self.theta + self.omega * self.dt)
 
         return self.state

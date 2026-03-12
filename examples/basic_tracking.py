@@ -58,12 +58,15 @@ def main():
     print("\nCreating LQR controller...")
     Q = lqr_cfg.get("Q", [1.0, 2.0, 0.5, 0.5])
     R = lqr_cfg.get("R", [0.1, 0.1])
-    
+
     controller = LQRController(
         dt=sim_cfg["dt"],
         Q=Q,
         R=R,
-        wheel_base=robot_cfg["wheel_base"],
+        tau_v=robot_cfg["tau_v"],
+        tau_omega=robot_cfg["tau_omega"],
+        max_v=robot_cfg["max_v"],
+        max_omega=robot_cfg["max_omega"],
     )
     print(f"  Q: {Q}")
     print(f"  R: {R}")

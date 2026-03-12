@@ -17,21 +17,27 @@ class TestSimulationEnv:
         """Create test environment."""
         gen = CircleTrajectory(n_points=100, max_v=1.0)
         trajectory = gen.generate()
-        
+
         kinematics = DiffDriveKinematics(
             wheel_base=0.3,
             max_v=1.5,
             max_omega=3.0,
+            tau_v=0.1,
+            tau_omega=0.08,
             dt=0.02,
         )
-        
-        controller = LQRController(dt=0.02, wheel_base=0.3)
-        
+
+        controller = LQRController(
+            dt=0.02, tau_v=0.1, tau_omega=0.08,
+            max_v=1.5, max_omega=3.0,
+        )
+
         return SimulationEnv(
             trajectory=trajectory,
             controller=controller,
             kinematics=kinematics,
-            config={"dt": 0.02, "max_steps": 200, "lateral_limit": 0.5},
+            config={"dt": 0.02, "max_steps": 200, "lateral_limit": 0.5,
+                    "logging_enabled": False},
         )
     
     def test_reset_initializes_state(self, env):

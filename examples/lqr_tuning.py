@@ -59,7 +59,10 @@ def main():
         dt=sim_cfg["dt"],
         Q=initial_Q,
         R=initial_R,
-        wheel_base=robot_cfg["wheel_base"],
+        tau_v=robot_cfg["tau_v"],
+        tau_omega=robot_cfg["tau_omega"],
+        max_v=robot_cfg["max_v"],
+        max_omega=robot_cfg["max_omega"],
     )
     
     # Create tuner

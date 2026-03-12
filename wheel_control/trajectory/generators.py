@@ -20,27 +20,21 @@ class CircleTrajectory(TrajectoryBase):
         self.dt = dt
         self.max_v = max_v
         self.max_omega = max_omega
+        self.max_acc = max_acc
         self.n_points = n_points
 
     def generate(self, rng: np.random.Generator | None = None) -> np.ndarray:
         rng = rng or np.random.default_rng()
         radius = rng.uniform(1.5, 5.0)
-        speed = rng.uniform(0.3, min(1.2, self.max_v))
 
-        circumference = 2.0 * np.pi * radius
-        total_time = circumference / speed
         t = np.linspace(0, 2.0 * np.pi, self.n_points)
-
         x = radius * np.cos(t)
         y = radius * np.sin(t)
 
-        yaw = t + np.pi / 2.0  # tangent direction for CCW circle
-        yaw = (yaw + np.pi) % (2 * np.pi) - np.pi
-
-        vx = np.full(self.n_points, speed)
+        yaw, vx, omega, kappa = self.compute_derivatives(
+            x, y, self.dt, self.max_v, self.max_omega, self.max_acc
+        )
         vy = np.zeros(self.n_points)
-        omega = np.full(self.n_points, speed / radius)
-        kappa = np.full(self.n_points, 1.0 / radius)
 
         return np.stack([x, y, yaw, vx, vy, omega, kappa], axis=1)
 
@@ -122,23 +116,22 @@ class StraightTrajectory(TrajectoryBase):
         self.dt = dt
         self.max_v = max_v
         self.max_omega = max_omega
+        self.max_acc = max_acc
         self.n_points = n_points
 
     def generate(self, rng: np.random.Generator | None = None) -> np.ndarray:
         rng = rng or np.random.default_rng()
-        speed = rng.uniform(0.3, min(1.2, self.max_v))
         heading = rng.uniform(-np.pi, np.pi)
         length = rng.uniform(5.0, 15.0)
 
         s = np.linspace(0, length, self.n_points)
         x = s * np.cos(heading)
         y = s * np.sin(heading)
-        yaw = np.full(self.n_points, heading)
 
-        vx = np.full(self.n_points, speed)
+        yaw, vx, omega, kappa = self.compute_derivatives(
+            x, y, self.dt, self.max_v, self.max_omega, self.max_acc
+        )
         vy = np.zeros(self.n_points)
-        omega = np.zeros(self.n_points)
-        kappa = np.zeros(self.n_points)
 
         return np.stack([x, y, yaw, vx, vy, omega, kappa], axis=1)
 

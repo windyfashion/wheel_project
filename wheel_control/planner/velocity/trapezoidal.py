@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import numpy as np
 
+from ...utils.math_utils import MathUtils
+
 
 class TrapezoidalVelocityPlanner:
     """Velocity planner using trapezoidal profile.
@@ -104,34 +106,23 @@ class TrapezoidalVelocityPlanner:
         
         return v_profile
     
-    def _compute_curvature(self, path: np.ndarray) -> np.ndarray:
+    @staticmethod
+    def _compute_curvature(path: np.ndarray) -> np.ndarray:
         """Compute curvature along path.
-        
+
         Parameters
         ----------
         path : ndarray, shape (N, 2)
             Path waypoints
-        
+
         Returns
         -------
         ndarray, shape (N,)
             Curvature at each point
         """
-        n_points = len(path)
-        if n_points < 3:
-            return np.zeros(n_points)
-        
-        # Central differences
-        dx = np.gradient(path[:, 0])
-        dy = np.gradient(path[:, 1])
-        ddx = np.gradient(dx)
-        ddy = np.gradient(dy)
-        
-        # Curvature formula
-        numerator = dx * ddy - dy * ddx
-        denominator = (dx ** 2 + dy ** 2) ** 1.5 + 1e-12
-        
-        return numerator / denominator
+        if len(path) < 3:
+            return np.zeros(len(path))
+        return MathUtils.compute_curvature(path[:, 0], path[:, 1])
     
     def _smooth_profile(self, v: np.ndarray, window: int = 3) -> np.ndarray:
         """Smooth velocity profile with moving average.

@@ -4,17 +4,17 @@ simulation:
   dt: 0.02
   max_steps: 1000
   lateral_limit: 0.5
-  init_noise: 0.1
+  init_noise: 0.01
 
 robot:
   wheel_base: 0.3
   wheel_radius: 0.05
-  max_v: 1.5
-  max_omega: 3.0
+  max_v: 1.0
+  max_omega: 1.0
   tau_v: 0.1
   tau_omega: 0.08
-  v_acc_max: 3.0
-  w_acc_max: 10.0
+  v_acc_max: 0.5
+  w_acc_max: 0.5
 
 trajectory:
   types:

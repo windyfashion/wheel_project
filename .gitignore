@@ -1,0 +1,7 @@
+# 运行/调试产生的日志目录
+logs/
+
+# Python 字节码缓存
+__pycache__/
+*.py[cod]
+*$py.class

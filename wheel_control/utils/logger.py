@@ -149,28 +149,39 @@ class ControlLogger:
         """
         return self._current_episode.copy()
     
-    def export_csv(self, path: str | Path | None = None) -> Path:
-        """Export current episode data to CSV.
-        
+    def export_csv(
+        self,
+        path: str | Path | None = None,
+        data: list[StepData] | None = None,
+    ) -> Path:
+        """Export episode data to CSV.
+
         Parameters
         ----------
         path : str or Path, optional
             Output file path. If None, generates automatic name.
-        
+        data : list[StepData], optional
+            Explicit data to export. Falls back to current episode,
+            then to the last completed episode.
+
         Returns
         -------
         Path
             Path to exported file
         """
-        if not self._current_episode:
+        if data is None:
+            data = self._current_episode
+        if not data and self._episodes:
+            data = self._episodes[-1]
+        if not data:
             raise ValueError("No episode data to export")
-        
+
         if path is None:
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
             path = self.log_dir / f"episode_{timestamp}.csv"
         else:
             path = Path(path)
-        
+
         fieldnames = [
             "step", "time",
             "x", "y", "theta", "vx", "omega",
@@ -178,15 +189,15 @@ class ControlLogger:
             "e_lat", "e_yaw", "e_v", "e_omega",
             "v_cmd", "omega_cmd",
         ]
-        
+
         with open(path, "w", newline="", encoding="utf-8") as f:
             writer = csv.DictWriter(f, fieldnames=fieldnames)
             writer.writeheader()
-            
-            for data in self._current_episode:
-                row = {field: getattr(data, field) for field in fieldnames}
+
+            for step_data in data:
+                row = {field: getattr(step_data, field) for field in fieldnames}
                 writer.writerow(row)
-        
+
         self.logger.info(f"Episode data exported to {path}")
         return path
     
